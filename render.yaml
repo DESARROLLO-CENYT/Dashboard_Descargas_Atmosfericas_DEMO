@@ -1,0 +1,49 @@
+# Blueprint de Render (Infrastructure as Code).
+#
+# Con este archivo en la raiz del repositorio, Render crea el servicio con esta
+# configuracion en vez de tener que llenarla a mano en el panel: el despliegue
+# queda documentado y es reproducible.
+#
+# Como usarlo: en Render → New → Blueprint → conectar el repositorio.
+# Los valores marcados con AJUSTAR dependen de la cuenta de la empresa.
+
+services:
+  - type: web
+    # Define la URL .onrender.com. El sufijo -demo no es cosmetico: el tablero
+    # de produccion es otro servicio, y un nombre repetido chocaria con el suyo.
+    name: dashboard-descargas-atmosfericas-demo
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free                               # AJUSTAR si se sube de plan
+    region: virginia                         # AJUSTAR: la region de US East es la
+                                             # de menor latencia desde Colombia
+    branch: main                             # AJUSTAR: rama desde la que despliega
+    autoDeploy: true                         # cada push a esa rama redespliega
+
+    # La raiz sirve el index.html del tablero. Render la consulta para saber si
+    # el servicio esta vivo; es una lectura de archivo estatico, no toca datos.
+    healthCheckPath: /
+
+    # En la base tienen que estar aplicados sql/001_foto_tablero.sql (aplicado
+    # en Supabase el 2026-09-16) y sql/002_foto_por_tablero.sql. Sin ellos
+    # funciona igual, pero cada arranque en frio baja ~3,9 MB en vez de ~0,75 MB.
+    # El puerto lo inyecta Render en $PORT, que el Dockerfile ya usa en su CMD.
+    envVars:
+      # Ya es el valor por defecto de la imagen; dejarlo explicito evita sorpresas.
+      - key: FUENTE_DATOS
+        value: supabase
+
+      # La fila de la foto de cache que le toca a este demo. La 1 es la del
+      # tablero de produccion, que corre contra la misma base y dibuja otra
+      # zona: compartirla hace que cada arranque descarte la foto del otro y la
+      # pise. Ver sql/002_foto_por_tablero.sql.
+      - key: FOTO_ID
+        value: 2
+
+      # Usuario dashboard_readonly por el Transaction pooler (puerto 6543).
+      # sync: false = el valor NO vive en este archivo (es un secreto): Render
+      # lo pide al crear el Blueprint y lo guarda en el servicio. Declararlo
+      # aca y no solo en el panel evita que el primer despliegue arranque sin
+      # el, que la imagen rechaza a proposito.
+      - key: SUPABASE_DASHBOARD_DB_URL
+        sync: false

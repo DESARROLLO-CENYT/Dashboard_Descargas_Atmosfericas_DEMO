@@ -1,0 +1,56 @@
+# Lo que no tiene que entrar en la imagen. Cada archivo que se copia de mas
+# alarga el build y engorda el contenedor; en el plan Free de Render eso se
+# nota tanto en el tiempo de despliegue como en el arranque en frio.
+
+# Control de versiones y herramientas locales
+.git
+.gitignore
+.dockerignore
+.claude/
+.vscode/
+
+# Documentacion (no la necesita la app en ejecucion)
+README.md
+
+# El parquet es solo para trabajar en local: produccion lee de Supabase. Que
+# no entre en la imagen garantiza que Render no pueda usarlo ni por error.
+**/*.parquet
+**/*.parquet.tmp
+
+# Los Excel REALES y los pasos intermedios del generador. En Render no existen
+# (no estan en git), pero una imagen construida en local si se los llevaria
+# dentro: excluirlos la deja igual a la que arma Render y evita que los datos
+# reales terminen en una imagen que se pueda publicar.
+datos/_fuente/
+**/*_DEMO.xlsx
+
+# Copias de respaldo y archivos de trabajo que no son fuente de datos.
+# Con ** porque los datos viven en datos/ y un patron sin barra solo mira
+# la raiz del contexto.
+**/*.BACKUP_*.xlsx
+**/Localizaciones_Corregidas.xlsx
+**/~$*.xlsx
+**/~$*.xls
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+venv/
+.venv/
+env/
+
+# Entorno y temporales
+.env
+.env.*
+*.log
+*.tmp
+
+# Pruebas y herramientas de desarrollo: la app en ejecucion no las usa
+tests/
+scripts/
+requirements-dev.txt
+
+# Lanzadores de Windows: solo sirven en la maquina del usuario
+Iniciar_Dashboard.bat
+iniciar_dashboard.ps1

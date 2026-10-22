@@ -1,0 +1,65 @@
+# === DATOS ===
+# NINGUN dato real entra en git: este repositorio es publico.
+#
+# Los dos Excel de datos/ SI se versionan, y tienen que estarlo: el tablero los
+# necesita en las dos fuentes de datos (no estan en Supabase, solo aca), asi que
+# un clon sin ellos no puede responder nada. Son los del demo, que
+# scripts/generar_datos_demo.py deja ahi: nombres de sitio y tags ficticios, y
+# la red redibujada en otra ventana de coordenadas por geometria_demo.py.
+#
+#   datos/Inventario_Estructuras_y_DPS_Final.xlsx   759 estructuras del demo
+#   datos/Localizaciones_Final.xlsx                 maestro de localizaciones
+#
+# Antes de commitear un cambio en esos dos, comprobar que siguen siendo los
+# anonimizados: en CAMPO van BOREAL/AUSTRAL y no los nombres reales.
+
+# Los Excel REALES, de donde lee el generador. Nunca se publican.
+datos/_fuente/
+
+# Pasos intermedios del generador: mismos nombres ficticios pero con las
+# coordenadas viejas, las de la ventana del activo real. No sirven y no deben
+# publicarse.
+datos/*_DEMO.xlsx
+
+# El parquet es el historico real de descargas y solo sirve para trabajar en
+# local (se genera con scripts/actualizar_parquet.py). Produccion lee de
+# Supabase, y el .dockerignore tambien lo deja fuera de la imagen.
+datos/*.parquet
+datos/*.csv
+*.parquet.tmp
+*.BACKUP_*.xlsx
+
+# === CREDENCIALES ===
+.env
+.env.*
+!.env.example
+
+# === PYTHON ===
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+venv/
+.venv/
+env/
+.ipynb_checkpoints/
+
+# === TEMPORALES DE SISTEMA Y OFIMATICA ===
+*.tmp
+*.temp
+*.log
+.DS_Store
+Thumbs.db
+~$*.xlsx
+~$*.xls
+
+# === IDES Y HERRAMIENTAS LOCALES ===
+.vscode/
+.idea/
+.claude/
+
+# === MARCA ===
+# Logo original y paleta de la empresa: insumos de identidad que el tablero no
+# usa en ejecucion (los que renderiza son los de static/). Fuera de un
+# repositorio publico.
+marca/
